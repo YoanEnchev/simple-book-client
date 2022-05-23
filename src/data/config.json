@@ -1,0 +1,6 @@
+{
+    "apiBaseURL": "http://localhost:8000/api",
+    "jsonHeaderParam": {
+        "Content-Type": "application/json"
+    }
+}
