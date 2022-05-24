@@ -9,26 +9,36 @@
         title: '',
         description: '',
         cover: ''
-      }
+      },
+      loaded: false
     }),
-    async created() {
+    async mounted() {
 
       let response = await fetch(`${data.apiBaseURL}/books/${this.$route.params.bookID}`, {
           headers: data.jsonHeaderParam
       });
 
       let json = await response.json();
+      
       this.book = json.data;
+      this.loaded = true;
     },
     methods: {
-      async onEdit(formData) {
-
-        // TODO: add author_id to formData
+      async onEdit(bookData) {
 
         let response = await fetch(`${data.apiBaseURL}/books/${this.book.id}`, {
           headers: data.jsonHeaderParam,
           method: 'PATCH', //'POST',
+          body: JSON.stringify(bookData)
         });
+
+        if(response.ok) {
+          alert('Book update succeeded.');
+          this.$router.push('/');
+          return;
+        }
+
+        alert('Unknown error occured. Book update failed.');
       }
     }
   }
@@ -36,9 +46,13 @@
 
 <template>
   <div>
-    <BookForm :title="book.title" 
-      :description="book.description" 
+
+    <BookForm 
+      
+      :initialTitle="book.title" 
+      :initialDescription="book.description" 
       :isEdit=true 
+      v-if="loaded"
       @book-form-submit="onEdit" />
   </div>
 </template>

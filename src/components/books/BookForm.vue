@@ -2,9 +2,16 @@
 
   export default {
       props: {
-          title: String,
-          description: String,
+          initialTitle: String,
+          initialDescription: String,
           isEdit: Boolean // true - edit book, false - create book.
+      },
+      // Arrow functions do not bind this. So the data function must be defined in a old-fashioned way.
+      data: function() {
+        return {
+          title: this.initialTitle,
+          description: this.initialDescription
+        }
       },
       methods: {
         onFormSubmit(e) {

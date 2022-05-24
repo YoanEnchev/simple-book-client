@@ -1,6 +1,25 @@
 <script>
   import { RouterLink, RouterView } from 'vue-router';
   import Greetings from './components/Greetings.vue';
+  import authState from './data/authState.js';
+
+  export default {
+    data: () => ({
+      isLoggedIn: false,
+    }),
+    methods: {
+      onSuccessfulAuth(data) {
+        authState.apiToken = data.api_token;
+        authState.isAuthor = data.is_author;
+        authState.userID = data.id;
+
+        this.isLoggedIn = true;
+      }
+    },
+    computed: {
+      isAuthor: () => authState.isAuthor
+    }
+  }
 </script>
 
 <template>
@@ -12,15 +31,17 @@
 
       <nav class="mb-4">
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-        <RouterLink to="/register">Register</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/books">Books</RouterLink>
+        <RouterLink to="/login" v-if="!isLoggedIn">Login</RouterLink>
+        <RouterLink to="/register" v-if="!isLoggedIn">Register</RouterLink>
+        <RouterLink to="/books/create" v-if="isLoggedIn && isAuthor">Create Book</RouterLink>
+        <RouterLink to="/books" v-if="isLoggedIn">Book List</RouterLink>
       </nav>
     </div>
   </header>
 
-  <RouterView />
+  <RouterView 
+    @successful-auth="onSuccessfulAuth"
+    />
 </template>
 
 

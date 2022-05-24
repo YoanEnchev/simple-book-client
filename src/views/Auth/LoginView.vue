@@ -7,5 +7,9 @@
         :showNameField=false
         :showRoleField=false
         :showReceiveNotificationField=false
-        btnText="Login"/>
+        :showConfirmPassword=false
+        btnText="Login"
+        requestSubURL="login"
+
+        @successful-auth="$emit('successful-auth', $event)" />
 </template>

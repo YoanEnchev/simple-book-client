@@ -7,9 +7,9 @@
         :showNameField=true
         :showRoleField=true
         :showReceiveNotificationField=true
+        :showConfirmPassword=true
         btnText="Register"
+        requestSubURL="register"
         
-        @user-form-submit="$emit('user-form-submit', $event)" />
+        @successful-auth="$emit('successful-auth', $event)" />
 </template>
-
-<!-- TODO: Send register request. -->

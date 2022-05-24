@@ -1,10 +1,14 @@
 <script>
 
+  import config from '../data/config.json';
+
   export default {
+
       data: () => ({
           name: '',
           email: '',
           password: '',
+          confirmPassword: '',
           role: 'author',
           receiveNotifications: false
       }),
@@ -12,31 +16,57 @@
           showNameField: Boolean,
           showRoleField: Boolean,
           showReceiveNotificationField: Boolean,
+          showConfirmPassword: Boolean,
           btnText: String,
+          requestSubURL: String
       },
       methods: {
-        onFormSubmit(e) {
+        async onFormSubmit(e) {
             e.preventDefault();
 
+            if(this.showConfirmPassword && this.password !== this.confirmPassword) {
+              alert('Password and confirm password must match.');
+              return;
+            }
+
             let data = {
-                // Set fields that are always displayed
-                email: this.email,
-                password: this.password
+              // Set fields that are always displayed
+              email: this.email,
+              password: this.password
             }
 
             if(this.showNameField) {
-                data.name = this.name;
+              data.name = this.name;
             }
 
             if(this.showRoleField) {
-                data.role = this.role;
+              data.role = this.role;
             }
 
             if(this.showReceiveNotificationField) {
-                data.receiveNotifications = this.receiveNotifications && this.role === 'reader';
+              data.receive_notifications = this.receiveNotifications && this.role === 'reader';
             }
+
+            if(this.showConfirmPassword) {
+              data.password_confirmation = this.confirmPassword;
+            }
+
+            let response = await fetch(`${config.apiBaseURL}/${this.$props.requestSubURL}`, {
+              method: 'POST',
+              headers: config.jsonHeaderParam,
+              body: JSON.stringify(data)
+            });
             
-            this.$emit('user-form-submit', data);
+            let responseData = await response.json();
+
+            if(!response.ok) {
+              alert('Action failed. ' + responseData);
+              return;
+            }
+
+            this.$emit('successful-auth', responseData);
+
+            this.$router.push('/');
         },
       }
   }
@@ -56,6 +86,10 @@
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" id="password" v-model="password" required>
+        </div>
+        <div class="mb-3" v-if="showConfirmPassword">
+          <label for="confirm_password" class="form-label">Confirm Password</label>
+          <input class="form-control" type="password" id="confirm_password" v-model="confirmPassword" required>
         </div>
         <div class="mb-3" v-if="showRoleField">
           <label for="role" class="form-label">Role</label>

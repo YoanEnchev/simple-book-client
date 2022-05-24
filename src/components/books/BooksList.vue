@@ -11,6 +11,7 @@
 <script>
   import BookItem from './BookItem.vue';
   import data from '../../data/config.json';
+  import authState from '../../data/authState.js';
 
   export default {
     data: () => ({
@@ -18,7 +19,9 @@
     }),
     async created() {
 
-      let response = await fetch(`${data.apiBaseURL}/books`, {
+      if (!authState.apiToken) return;
+
+      let response = await fetch(`${data.apiBaseURL}/books?api_token=${authState.apiToken}`, {
           headers: data.jsonHeaderParam
       });
 
