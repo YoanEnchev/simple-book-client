@@ -1,10 +1,14 @@
 <script>
   import data from '../../data/config.json';
+  import authState from '../../data/authState.js';
   import BookForm from '../../components/books/BookForm.vue';
 
   export default {
     methods: {
       async onCreate(bookData) {
+
+        bookData.api_token = authState.apiToken;
+        bookData.author_id = authState.userID;
 
         let response = await fetch(`${data.apiBaseURL}/books`, {
           headers: data.jsonHeaderParam,

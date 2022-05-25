@@ -8,6 +8,7 @@
         <!-- Show buttons only if the authenticated user is the author of the book. -->
         <div class="d-inline-block" v-if="userID == book.author.id">
           <button class="btn btn-primary me-2" @click="onEditClick">Edit</button>
+          <button class="btn btn-dark me-2" @click="onUpdateCoverClick">Update Cover</button>
           <button class="btn btn-danger" @click="onDeleteClick">Delete</button>
         </div>
       </div>
@@ -17,6 +18,7 @@
 
 <script>
   import authState from '../../data/authState.js';
+  import data from '../../data/config.json';
   
   export default {
     props: {
@@ -24,13 +26,31 @@
     },
     methods: {
       onViewClick() {
-        console.log('on view');
+        this.$router.push(`/books/${this.book.id}/show`);
       },
       onEditClick() {
         this.$router.push(`/books/${this.book.id}/edit`);
       },
-      onDeleteClick() {
-        console.log('DELETE BOOK');
+      onUpdateCoverClick() {
+        this.$router.push(`/books/${this.book.id}/edit-cover`);
+      },
+      async onDeleteClick() {
+
+        let response = await fetch(`${data.apiBaseURL}/books/${this.book.id}`, {
+          headers: data.jsonHeaderParam,
+          method: 'DELETE',
+          body: JSON.stringify({
+            api_token: authState.apiToken
+          })
+        });
+
+        if(response.ok) {
+          alert('Book has been deleted succeessfully.');
+          this.$router.push('/');
+          return;
+        }
+
+        alert('Something went wrong. Please try again later');
       }
     },
     computed: {

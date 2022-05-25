@@ -1,5 +1,6 @@
 <script>
   import data from '../../data/config.json';
+  import authState from '../../data/authState.js';
   import BookForm from '../../components/books/BookForm.vue';
 
   export default {
@@ -14,7 +15,7 @@
     }),
     async mounted() {
 
-      let response = await fetch(`${data.apiBaseURL}/books/${this.$route.params.bookID}`, {
+      let response = await fetch(`${data.apiBaseURL}/books/${this.$route.params.bookID}?api_token=${authState.apiToken}`, {
           headers: data.jsonHeaderParam
       });
 
@@ -25,6 +26,8 @@
     },
     methods: {
       async onEdit(bookData) {
+
+        bookData.api_token = authState.apiToken;
 
         let response = await fetch(`${data.apiBaseURL}/books/${this.book.id}`, {
           headers: data.jsonHeaderParam,
